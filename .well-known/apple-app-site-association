@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["BU6NRL64GR.com.berkanaslandev.HappyBirthThey"],
+        "components": [
+          {
+            "/": "/b/*",
+            "comment": "Happy BirThey birthday share links"
+          }
+        ]
+      }
+    ]
+  }
+}

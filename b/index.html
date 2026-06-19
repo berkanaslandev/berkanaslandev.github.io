@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy BirThey — Birthday Invite</title>
+  <link rel="apple-touch-icon" href="https://berkanaslandev.github.io/privacy/apple-touch-icon.png" />
+  <link rel="icon" href="https://berkanaslandev.github.io/privacy/favicon.png" />
+  <style>
+    :root {
+      --pink: #FF4D8F;
+      --purple: #7C2DFF;
+      --bg-top: #F4E8FF;
+      --bg-bottom: #FFE0EC;
+      --text: #1a1a2e;
+      --text-soft: #5a5a6e;
+      --card: rgba(255, 255, 255, 0.72);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-top: #14101f;
+        --bg-bottom: #1c1020;
+        --text: #f2f2f7;
+        --text-soft: #b8b8c4;
+        --card: rgba(40, 36, 52, 0.72);
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 40px 28px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(124, 45, 255, 0.18);
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 38px;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(255, 77, 143, 0.35);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .sub {
+      color: var(--text-soft);
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .date-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 77, 143, 0.12);
+      color: var(--pink);
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+    .cta {
+      display: block;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 17px;
+      padding: 17px;
+      border-radius: 18px;
+      box-shadow: 0 10px 26px rgba(124, 45, 255, 0.3);
+      transition: transform 0.15s ease;
+    }
+    .cta:active { transform: scale(0.97); }
+    .brand {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+    .brand b { color: var(--text); }
+    .privacy {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="avatar" id="avatar">🎂</div>
+    <h1 id="title">A friend wants you to remember their birthday</h1>
+    <p class="sub" id="sub">Get Happy BirThey to add them and never miss the day.</p>
+    <div class="date-pill" id="datePill" style="display:none;">🎂 <span id="dateText"></span></div>
+    <a class="cta" href="https://apps.apple.com/app/id6779285628">Get Happy BirThey — Free</a>
+    <p class="brand">Happy Bir<b>They</b></p>
+    <p class="privacy">Your data stays in your iCloud. We can't even see it.</p>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const name = (params.get("n") || "").trim().slice(0, 100);
+      const dateRaw = params.get("d") || "";
+
+      if (name) {
+        const parts = name.split(/\s+/);
+        const initials = (parts.length >= 2
+          ? parts[0][0] + parts[1][0]
+          : name.slice(0, 2)).toUpperCase();
+        document.getElementById("avatar").textContent = initials;
+        document.getElementById("title").textContent =
+          name + " wants you to remember their birthday";
+        document.getElementById("sub").textContent =
+          "Get Happy BirThey to add " + name + " and never miss the day.";
+      }
+
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateRaw);
+      if (m) {
+        const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+        if (!isNaN(d)) {
+          const text = d.toLocaleDateString(undefined, {
+            month: "long", day: "numeric", year: "numeric"
+          });
+          document.getElementById("dateText").textContent = text;
+          document.getElementById("datePill").style.display = "inline-flex";
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
