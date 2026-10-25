@@ -2,14 +2,14 @@
 
 Bu klasör, "Doğum Günümü Paylaş" linklerinin herkeste çalışması için
 gereken web dosyalarını içerir. Bunlar **kök domain** repo'suna
-(`berkanaslandev.github.io`) gitmeli — `privacy` repo'suna DEĞİL.
+(`berkanaslandev.github.io`) gitmeli — `happy-birthey-privacy` repo'suna DEĞİL.
 
 ## Neden kök repo?
 
 Universal Link'lerde Apple, AASA dosyasını **her zaman** domain kökünden okur:
 `https://berkanaslandev.github.io/.well-known/apple-app-site-association`
 
-`privacy` repo'su `/privacy/` altında servis edildiği için buraya uymaz.
+`happy-birthey-privacy` repo'su `/happy-birthey-privacy/` altında servis edildiği için buraya uymaz.
 Kök domain (`berkanaslandev.github.io`) için ayrı bir repo gerekir.
 
 ## Dosyalar
