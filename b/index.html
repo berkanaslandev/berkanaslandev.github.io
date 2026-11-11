@@ -138,15 +138,40 @@
 
   <script>
     (function () {
+      // Strip Unicode control + bidi/format characters before display. Without
+      // this a crafted link could render a visually misleading name (homograph /
+      // Trojan-Source spoofing). Mirrors BirthdayShareLink.sanitizedName in app.
+      function sanitize(s) {
+        return (s || "")
+          .replace(/[\u0000-\u001F\u007F-\u009F\u061C\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 100);
+      }
+
+      // The first `count` characters as people see them: an emoji or an
+      // accented letter stays whole, where s[0] would cut it in half.
+      function firstCharacters(s, count) {
+        if (window.Intl && Intl.Segmenter) {
+          const out = [];
+          for (const part of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s)) {
+            out.push(part.segment);
+            if (out.length === count) break;
+          }
+          return out.join("");
+        }
+        return Array.from(s).slice(0, count).join("");
+      }
+
       const params = new URLSearchParams(window.location.search);
-      const name = (params.get("n") || "").trim().slice(0, 100);
+      const name = sanitize(params.get("n"));
       const dateRaw = params.get("d") || "";
 
       if (name) {
-        const parts = name.split(/\s+/);
+        const parts = name.split(" ");
         const initials = (parts.length >= 2
-          ? parts[0][0] + parts[1][0]
-          : name.slice(0, 2)).toUpperCase();
+          ? firstCharacters(parts[0], 1) + firstCharacters(parts[1], 1)
+          : firstCharacters(name, 2)).toUpperCase();
         document.getElementById("avatar").textContent = initials;
         document.getElementById("title").textContent =
           name + " wants you to remember their birthday";
@@ -154,12 +179,18 @@
           "Get Happy BirThey to add " + name + " and never miss the day.";
       }
 
+      // Only days that exist — 30 February used to roll over into March — from
+      // 1900 to today, as the app accepts them. Shown on the Gregorian calendar
+      // whatever the browser's locale prefers, like the app.
       const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateRaw);
       if (m) {
-        const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-        if (!isNaN(d)) {
+        const year = Number(m[1]), month = Number(m[2]) - 1, day = Number(m[3]);
+        const d = new Date(2000, 0, 1);
+        d.setFullYear(year, month, day);
+        const exists = d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+        if (exists && year >= 1900 && d <= new Date()) {
           const text = d.toLocaleDateString(undefined, {
-            month: "long", day: "numeric", year: "numeric"
+            calendar: "gregory", month: "long", day: "numeric", year: "numeric"
           });
           document.getElementById("dateText").textContent = text;
           document.getElementById("datePill").style.display = "inline-flex";
